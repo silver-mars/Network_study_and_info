@@ -31,10 +31,78 @@ https://github.com/kubernetes-sigs/kubespray
 Устанавливаем, настраиваем и подготавливаем для деплоя кубернетесовские ноды.
 Устанавливаем control-plane компоненты кластера: kube api server, controller manager scheduler, генерировать для них сертификаты, генерировать их манифесты, конфигурации; генерировать клиентские сертификаты и доступы к кластеру.
 Настраиваем с помощью утилиты kubeadm сами ноды кластера kubernetes и вводить их в кластер, подключать сетевой плагин для нашего кластера kubernetes.
-**Погуглить что такое Calico Route Reflector** + https://habr.com/ru/company/flant/blog/485716/
+**Погуглить что такое Calico Route Reflector**
 небольшой лайфхак для того, чтобы работать с Windows-нодами.
 Настраиваем дополнительные компоненты для кластера kubernetes: external_cloud_controller, policy_controller, ingress_controller, etc.
 В завершении устанавливаем и настраиваем кластерный DNS.
 #ВОТ ТУТ ВСЁ РАСПИСАТЬ НАПРОЧЬ ПРЯМО СЮДА ПРИ ПРАКТИКЕ#
 
-3.4.
+Сперва обновляем pip, если нужно:
+pip3 install --upgrade pip
+Из директории Kubespray необходимо обновить requirements.txt:
+pip3 install -r requirements-2.11.txt
+
+В директории inventory/sample уже есть подготовленный образец инвентаря, поэтому мы копируем её:
+cp -r /inventory/sample /inventory/your_inventory
+
+Для практики:
+[all]
+master-1
+master-2
+master-3
+ingress-1
+node-1
+node-2
+
+[control_plane]
+master-1
+master-2
+master-3
+
+[etcd]
+master-1
+master-2
+master-3
+
+[kube_node]
+node-1
+node-2
+ingress-1
+
+[kube_ingress]
+ingress-1
+
+[k8s_cluster:children]
+kube_control_plane
+kube_node
+
+kube_pods_subnet не должны совпадать с kube_service_addresse
+
+В Ansible есть встроенная группа all. В ней находятся все хосты, описанные в инвентаре.
+Указать переменные для группы можно двумя способами:
+1. В файле с именем группы,
+например, для группы control_plane - это файл по пути **group_vars/control_plane.yml**
+2. Если много переменных, то можно разложить их на несколько файлов и положить эти файлы в директорию с именем группы:
+**group_vars/control_plane/load.yml**
+
+Пройдёмся по некоторым переменным из **group_vars/all**.
+**group_vars/all/all.yml**
+kubelet load modules: true # Параметр, позволяющий kubelet подгружать необходимые ему модули ядра.
+kubeadm enabled: false # Ставим без kubeadm
+kube read only port: 10255 # Параметр, включающий порт откуда можно получать метрики узла без авторизации. Поднимается на сером адресе внутри кластера. Нужен для мониторинга.
+
+**group_vars/all/docker.yml**
+docker_storage_options: -s overlay2 # Запустить docker с файловым драйвером overlay2
+
+**group_vars/all/download.yml**
+download_run_once: true # Оптимизация загрузки необходимых образов и файлов. Загрузка из интернета на один сервер, копирование на все узлы нашего кластера.
+
+**group_vars/etcd.yml**
+etcd_snapshot_count: "5000" # Количество записей в журнале операции, которые хранятся в памяти. Уменьшение необходимо для экономии памяти ETCD в **тестовом** кластере.
+etcd_memory limit: 0 # Отключаем ограничение по памяти
+
+**Настройки серверов в группе k8s-cluster**
+**group_vars/k8s-cluster/k8s-cluster.yml**
+kube_version: v1.18.3
+
+3.5 5 ster, -06:15

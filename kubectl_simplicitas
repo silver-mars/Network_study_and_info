@@ -1,0 +1,11 @@
+It's running own image.
+kubectl run test -it --rm --image=centosadmin/utils bash
+Пробрасывание порта для локальных тестов.
+kubectl port-forward my-deployment-58b675fff8-8wkkq 8080:80
+curl localhost:8080
+Посмотреть метки
+kubectl get po --show-labels
+Show endpoints
+kubectl get endpoints || kubectl get ep
+Посмотреть ip-address own containers.
+kubectl get pod -o wide

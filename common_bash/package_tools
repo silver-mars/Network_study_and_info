@@ -1,0 +1,24 @@
+APT использует файлы /var/lib/apt/lists/* для отслеживания доступных пакетов.
+В то время как dpkg для этих целей использует файл /var/lib/dpkg/available.
+
+apt clean - удаление неустановленных пакетов.
+apt autoclean - удаление всех пакетов, которые больше не доступны для скачивания.
+apt autoremove - удаление ненужных зависимостей. По-хорошему делается после любого sudo apt remove, чтобы удалить лишние пакеты, которые использовала только та программа, которую вы только что удалили.
+
+apt-cache - проверка локального кэша пакетов
+dpkg-reconfigure  - повторная конфигурация уже установленного пакета (если он использует debconf)
+
+dpkg --get-selections # Все установленные (и деинсталлированные) пакеты.
+apt-cache show namepk
+
+dpkg --print-architecture
+dpkg --print-foreign-architectures # Показать дополнительные архитектуры.
+Хранятся в /var/lib/dpkg/arch
+dpkg --add-architecture
+dpkg --remove-architecture
+apt update
+
+man update-alternatives
+update-alternatives --install [место, где создастся символическая ссылка] name [ссылка на исходник] int
+sudo update-alternatives --install /opt/utm/jre/ utm_java /opt/utm/jre/bin/java 1
+

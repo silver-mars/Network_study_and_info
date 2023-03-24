@@ -1,0 +1,4 @@
+List net-devices:
+ls /sys/class/net
+
+echo 192.168.10.{1..254} | xargs -n1 -P0 ping -c 1 | grep "bytes from"

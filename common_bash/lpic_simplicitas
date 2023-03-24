@@ -1,0 +1,319 @@
+101-500.
+1. Shells, redirection, pipes, text filters, regular expressions.
+2. Managing Software and Processes. (Handling shared libraries and managing processes).
+3. Configuring Hardware. (BIOS, expansion cards, USB devices, hard disks and partitions and filesystems used on hard disks).
+4. Managing Files. (Manage files, ownership, permissions, tools for archiving files).
+5. Booting, Initializing, Virtualizing Linux. (Specific topics include the GRUB Legacy and GRUB 2 boot loaders, boot diagnostics, and runlevels. How to run Linux in a virtual machine environment).
+
+102-500.
+6. Configuring the GUI, Localization and Printing. (Configuration, managing GUI logins, configuring location-specific features, enabling accessibility features, and setting up Linux to use a printer.
+7. Administering the System. (Miscellaneous administrative tasks (user and group management, user environments, managing log files, and setting the clock)).
+8. Congiguring Basic Networking. (Basic network configuration TCP/IP basics, setting up Linux on a TCP/IP network, and netword diagnostics.
+9. Writing Scripts.
+10. Securing Your System (network security, local security, use of encryption to improve security).
+
+HAL - hardware abstract level. ОС через неё обращается к абстрактному представлению железа.
+Так ядру удобнее работать с различными видами оборудования (сетевая карта - это сетевая карта и т. д., сперва - устройство, затем - подбор конкретного драйвера).
+Udev - современный менеджер устройств.
+Dbus (Desktop bus) - программная шина, позовляющая процессам обмениваться информацией между собой. Позволяет получить информацию об оборудовании от ядра и передать эту информацию программному обеспечению. Программная часть работает с железом через Dbus.
+udev - работает на уровне пользователя, управляется событиями (подключение нового устройства и т. д.);
+понятные файлы конфигурации (не json),
+держит в системе только файлы активных устройств,
+сохраняет имена устройств при переподключении. (раньше они менялись от порядка подключения).
+Devfs - ранняя виртуальная файловая система.
+Содержит файлы, при помощи которых можно непосредственно обращаться к устройствам (содержимое).
+mem
+null
+pts/
+urandom and random
+sdx (sda, sdb, etc)
+tty
+
+c - cymbol
+b - block
+
+Sysfs - выводит информацию о драйверах и устройствах на уровень пользователя, монтируется в /sys
+содержит файлы, которые предоставляют информацию об устройствах (форма).
+/sys
+devices/ - все устройства, зарегистрированные в ядре, представленные в виде дерева.
+bus/ - перечень шин (подсистема, которая служит для передачи данных между какими-то функциональными блоками) (сетевая, usb-шина, etc).
+drivers/ - драйверы
+block/ - блочные устройства как правило носители информации. Но здесь появляются только те устройства, для которых есть драйвер.
+class/ - группировка устройств по классам.
+
+Procfs - иерархическое представление всех процессов в системе.
+/proc
+PID/ - информация о конкретном процессе.
+cpuinfo/ - сведения о ЦПУ
+devices/ - перечень настроенных устройств
+mounts/ - смонтированные файловые системы
+sys/ - доступная для редактирования информация о системе.
+
+Unit - модули, которыми оперирует systemd
+
+.service
+.mount
+,device
+.socket
+
+/usr/lib/systemd - unit's default
+/etc/systemd - юниты, которые можно редактировать.
+
+BIOS отвечает за базовый ввод/вывод данных с устройств/на устройства.
+1. POST (Power-on self-test, он же «тест на адекватность себя самого», выполняющийся как этап пре-загрузки).
+2. Ищет, загружает и выполняет программу-загрузчик ОС.
+3. Короче говоря, BIOS загружает и выполняет загрузочную запись (MBR).
+
+BIOS (и не упомянутый тут (U)EFI) прежде всего занимается инициализацией устройств (в том числе загрузку собственных биосов PCI-устройств), про это ничего не написано. Хотя эта роль постепенно сокращается, так как всё больше железа инициализирует себя само и/или поддерживает горячее подключение и потому всё равно инициализируется ОС, но, например, инициализацию оперативной памяти он делает всегда.
+
+MBR — это главная загрузочная запись, хранящаяся на жестком диске
+Она размещена в 1-м секторе загрузочного диска, например /dev/hda или /dev/sda
+MBR занимает меньше, чем 512 байтов. Она состоит из трех компонентов:
+1) главная загрузочная информация, «живущая» в первых 446 байтах;
+2) информация о таблице разделов — в следующих 64 байтах;
+3) и последние 2 байта нужны для проверки корректности mbr. Она содержит информацию о GRUB'е (или LILO).
+Простыми словами — MBR загружает и выполняет загрузчик GRUB.
+
+«GUID Partition Table (GPT) является стандартным форматом размещения таблиц разделов на физическом жестком диске. Он является частью Extensible Firmware Interface (EFI) (Расширяемый Микропрограммный Интерфейс) — стандарта, предложенного Intel на смену отжившего BIOS, одного из последних реликтов первозданной IBM PC. EFI использует GPT там, где BIOS использует Главную загрузочную запись (MBR)....»
+
+Runlevel's.
+Вручную лучше в /etc/rc?.d/ ничего не править, а использовать команду update-rc.d, которая позволяет создавать ссылки, удалять их, запрещать (фактически переименовывать c S* на K*) и разрешать (c K* на S*) запуск. 
+
+First, the BIOS runs a boot loader. Boot loader is a small program that initializes the necessary hardware to find and run the full operating system, usually found at another location on the same hard drive but sometimessituated on a separate internal or external storage device.
+To get things started, the BIOS must know where to find the boot loader program on an installed storage device.
+When booting from a hard drive, you nust designate which hard drive, and from which partition on the hard drive the BIOS should load the boot loader program. This is done by defining a master boot record.
+The MBR is the first sector on the first hard drive partition on the system.
+The BIOS looks for the MBR and reads the program stored there into memory.
+
+UEFI specifies a special disk partition called the EFI System Partition (ESP) to store boot loader programs.
+This allows for any size of boot loader program, plus the ability to store the boot loader programs for multiple operating systems.
+The ESP setup utilizes the old Microsoft File Allocation Table (FAT) filesystem to store the boot loader programs. On Linux systems, the ESP is typically mounted in the /boot/efi/ directory, and the boot loader files are commonly stored using the .efi filename extension.
+
+The boot loader program (in first sector on the first hard drive partition on the system) mainly points to the location of the actual operating system kernel file, which is stored in a boot sector of a separate partition on the system.
+
+ls /sys/firmware/efi - if it's exists, you use UEFI.
+
+Diff:
+BIOS - menu
+GRUB - interactive shell
+/boot/grub/menu.lst
+Global definitions and operating system definitions.
+Root: defines the disk and partition where the GRUB /boot folder partition is located on the system.
+# Exempli gratia:
+Legacy:
+root (hd1,0)
+GRUB2:
+set root=(hd1,1)
+# Comments:
+hd0 = hda && sda
+hd0,1 = hda1 && sda1
+hd0,2 = hda2 && sda2, et cetera
+
+Kernel: degines the kernel image file stored in the /boot folder to load.
+Initrd: defines the initial RAM disk file or filesystem, which contains drivers necessary for the kernel to interact with the system hardware.
+GRUB Legacy:
+Title: The first line for each boot definition section, this is what appears in the boot menu.
+
+
+GRUB в настройках определяет путь к initrd.image
+
+Initrd command helps defines a file that's mounted by the kernel at boot time as a RAM disk or filesystem. The kernel can then load modules from the RAM disk or filesystem, which then allows it to access hardware or filesystems not compiled into the kernel itself.
+
+Initrd используется самим ядром в качестве временной корневаой файловой системы, пока kernel не загрузится в реальную примонтированную файловую систему. Этот временный диск также содержит необходимые для загрузки драйверы, позволяющие получить доступ к разделам дисков и другому оборудованию.
+
+P. S. Не во всех дистрибутивах нужен initrd.
+After build GRUB Legacy configuration file, you must install the GRUB Legacy program in the MBR. (grub-install).
+Exempli gratia:
+grub-install /dev/sda
+or
+grub-install 'hd(0,0)'
+After making changes to the conf.file, you don't need to reinstall grub-install. GRUB Legacy reads the configuration file each time it runs.
+
+Into GRUB2, first drive, first partition equal hd0,gpt1.
+Change /etc/grub.d/ configuration files, and then
+grub-mkconfig, grub-mkconfig2 or update-grub.
+
+If you hold down the Shift key when the system first boots, this will display the GRUB boot menu.
+GRUB2 entry editor keystrokes:
+ESC - Discards any changes and return to menu interface.
+Ctrl + C - Starts the GRUB command-line interface.
+Ctrl + X - Boot system with edited entry.
+
+for change options kernel:
+GRUB - kernel named kernel.
+GRUB2 - kernel named linux*.
+
+Add keystrokes after end of this line.
+Man - kernel-parameters (ww.kernel.org/doc/Documentation/admin-guide/).
+
+When kernel complete checks and settings up apparate system, then tell init.
+Begin at the moment, kernell responses only system call, and only init have control over all.
+
+Next - Initialization.
+SysVinit - is not used by many major Linux distributions anymore.
+Systemd - this daemon reduces initialization time by starting services in a parallel manner.
+Upstart (old Fedora, openSUSE, RHEL, Ubuntu).
+
+which init
+readlink -f output_which
+ps -p 1
+pstree -p 1
+
+Systemd.
+
+Systemd approach introduced a major paradigm shift in how linux systems manage services. Services can now be started when the system boots, when a particular hardware component is attached to the system, when certain other services are started, and so on.
+Some services can be started based upon a timer.
+
+Базовый объект, которым управляет systemd — это юнит (unit). Юниты могут быть многих типов, но самый часто используемый тип юнита — это сервис (название оканчивается на «.service»). Для управления сервисами используется команда systemctl.
+
+The easiest way to start exploring systemd is through the systemd units.
+A unit defines a service, a group of services, or an acrion. Each unit consists of a name, a type, and a configuration file.
+There are currently 12 different systemd unit types:
+    automount
+    device
+    mount
+    path
+    scope
+    service
+    slice
+    snapshot
+    socket
+    swap
+    target
+    timer
+The systemctl utility is the main gateway to managing systemd and system services.
+
+> service - аналог демона или что-либо, что можно запустить;
+> device - факт подключения какого-либо устройства (имя юнита генерируется из sysfs-имени устройства);
+> target - ничего не описывает, группирует другие юниты;
+> mount - точка монтирования файловой системы (имя юнита должно соответствовать пути до точки монтирования);
+> automount - аналог autofs: точки автомонтирования (должен существовать *.mount-юнит с тем же именем);
+> timer - аналог cron. Периодический запуск другого юнита (по умолчанию запускаться будет *.service-юнит с тем же именем);
+> socket - аналог xinetd. Запуск юнита при подключении к указанному сокету (по умолчанию запускаться будет *.service-юнит с тем же именем);
+> path - запуск юнита по событию доступа к какому-либо пути в файловой системе (по умолчанию запускаться будет *.service-юнит с тем же именем);
+> slice - группирует другие юниты в дереве cgroups, позволяя иерархично задавать ограничения по используемым ресурсам;
+
+Service unit files contain information such as which environment to use, when a service must be started, what targets want this service started, and so on.
+These configuration files are located in different directories. The following list shows the directory locations in ascending priority order:
+/etc/systemd/system/ - юниты, созданные системным администратором.
+/run/systemd/system/ - динамически создаваемые юниты или юниты, созданные в рантайме.
+/usr/lib/systemd/system/ - юниты из установленных пакетов RPM — всякие nginx, apache, mysql и прочее, то есть системные юниты, поставляемые обычно вместе с приложениями.
+/usr/lib/systemd/system/ - this directory store only unmodified service unit files, which are provided by default.
+
+systemctl - базовая команда подобна systemctl list-units
+systemctl status - общее состояние системы с древом запущенных процессов.
+
+Запуск и остановка юнита:
+    systemctl start unit_name
+    systemctl stop unit_name 
+
+    Примечание: по умолчанию принимается тип service. Таки образом команды
+    systemctl start sshd.service
+    и
+    systemctl start sshd
+    эквивалентны.
+
+Секция install используется командами systemctl enable/disable для добавления симлинка в нужный target (создания иск. зависимости). Конкретно в этом случае, при выполнении команды:
+
+    systemctl enable sshd.service 
+в папке multi-user.target будет создан симлинк на sshd.service и при выполнении данного target-a sshd будет запущен.
+Кстати, проверить наличие юнита в автозагрузке можно командой:
+
+    systemctl is-enabled unit_name
+Она вернет enabled/disabled.
+
+systemctl reload unit_service will load the service configuration file of the running designated service without stopping the service.
+daemon-reload command will load the unit configuration file and not the service configuration file.
+restart will stop and immediately restart the service. Although this will load the modified service configuration file, it will also disrupt the service for current service users.
+
+systemctl get-default
+systemctl list-units
+systemctl list-unit-files:
+enabled: Service starts at system boot.
+disabled: Service does not start at system boot.
+static: Service starts if another unit depends on it.
+Can also be manually started.
+
+systemctl cat ntpd.service
+#finding and displaying a systemd unit file.
+man -k systemd
+man systemd.service
+man systemd.directives
+systemctl cat something.service - указывает страницы manual'a необходимые для знакомства.
+
+#Experiment with you own system.service:
+1. Create you own subdirectory in /etc/systemd/system/service.your-service-name.d/
+2. Create description.conf
+add your modified directives to this configuration file.
+3. Systemd-delta - it will display any unit files that are duplicated, extended, redirected and so on.
+4. Systemctl daemon-reload for the service whose unit file you modified or extended.
+# Load the unit configuration file of the running designated unit(s) to make until file configuration changes without stopping the service.
+5. And systemctl restart to start or restart service.
+
+Пример создания юнита:
+Запускать юнит после какого-либо сервиса или группы сервисов (например network.target):
+    After=syslog.target
+    After=network.target
+    After=nginx.service
+    After=mysql.service
+Для запуска сервиса необходим запущенный сервис mysql:
+    Requires=mysql.service
+Для запуска сервиса желателен запущенный сервис redis:
+    Wants=redis.service
+
+В итоге переменная Wants получается чисто описательной.
+Если сервис есть в Requires, но нет в After, то наш сервис будет запущен параллельно с требуемым сервисом, а не после успешной загрузки требуемого сервиса
+
+Пользователь и группа, под которым надо стартовать сервис:
+    User=myunit
+    Group=myunit
+
+### systemctl reload will load the service configuration file of the running designated service without stopping service.
+Demon-reload file will load the unit configuration file and not the service configuration file.
+
+systemctl status name (e.g. docker)
+systemctl start/stop name
+systemctl is-active name
+systemctl is-system-running
+if status degraded use systemctl --failed.
+
+Also useful commands:
+get-default
+set-default
+isolate // with a target name for an argument all services and peocesses not enabled in the listed target are stopped. And any services and processes enabled and not running in the listed target are started.
+
+Notifying the users.
+/etc/issue: Contains text to be displayed on the tty terminal login screens (prior to logging into the system).
+/etc/issue.net" Contains logon screen messages for remote logins.
+/etc/motd: Called the Message Of The Day file, contains text that is displayed after a user has logged into a tty terminal.
+/bin/notify-send and
+/usr/bin/notify-send: Sends messages to a user employing the GUI but who is not logged into a tty terminal or does not have a GUI terminal emulator open.
+/bin/wall or
+/usr/bin/wall: Sends messages (wall messages) to users logged into a tty terminal or who have a GUI terminal emulator open and have their message status set to "yes".
+
+The wall command sends simple messages to certain system users - those who are currently logged into a terminal (tty#) or a terminal-emulator (pts/#) and have their message status set to "yes".
+
+to check your own message status, you can employ the mesg command:
+mesg
+is y
+mesg y or mesg n is turn.
+
+To see who is currently logged into the system and whether or not they have their message status set to "yes", use the who -T command.
+All users who can receive wall messages will have a plus (+) following their username.
+
+wall command - get you input to all users (who -T) from begin to EOF.
+
+_________________________________________________________________________
+Log files on linux
+https://habr.com/ru/post/332502/?
+
+/var/log/syslog или /var/log/messages содержит глобальный системный журнал, в котором пишутся сообщения с момента запуска системы, от ядра Linux, различных служб, обнаруженных устройствах, сетевых интерфейсов и много другого.
+/var/log/auth.log или /var/log/secure — информация об авторизации пользователей, включая удачные и неудачные попытки входа в систему, а также задействованные механизмы аутентификации.
+/var/log/dmesg — драйвера устройств. Одноименной командой можно просмотреть вывод содержимого файла. Размер журнала ограничен, когда файл достигнет своего предела, старые сообщения будут перезаписаны более новыми.
+/var/log/boot.log — Информация, которая пишется при загрузке операционной системы.
+/var/log/cron — Отчет службы crond об исполняемых командах и сообщения от самих команд.
+/var/log/faillog — Неудачные попытки входа в систему. Очень полезно при проверке угроз в системе безопасности, хакерских атаках, попыток взлома методом перебора. Прочитать содержимое можно с помощью команды faillog.
+var/log/kern.log — Журнал содержит сообщения от ядра и предупреждения, которые могут быть полезны при устранении ошибок пользовательских модулей встроенных в ядро.
+/var/log/maillog/ или /var/log/mail.log — Журнал почтового сервера, используемого на ОС.
+/var/log/pm-powersave.log — Сообщения службы экономии заряда батареи.
+

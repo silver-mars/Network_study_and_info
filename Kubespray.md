@@ -103,6 +103,53 @@ etcd_memory limit: 0 # Отключаем ограничение по памят
 
 **Настройки серверов в группе k8s-cluster**
 **group_vars/k8s-cluster/k8s-cluster.yml**
-kube_version: v1.18.3
+kube_version: v1.18.3 - версия кубернетес.
+kube_eidc_auth: false
+kube_basic_auth: false - два вида аутентификации. Оставляем аутентификацию по токену.
+kube_network_plugin: flannel - CNI
+kube_service_addresses: 10.100.0.0./16 - адреса из этой сети будут назначаться на сервисы типа cluster_ip.
+kube_pods_subnet: 10.0.0.0/16 - адреса из этой сети будут назначаться подам в нашем кластере.
+**kube_pods_subnet не должны совпадать с kube_service_addresse**
+kube_apiserver_insecure_port: 0 - отключаем беспарольный доступ к api server.
+kube_proxy_mode: iptables - режим работы прокси (iptables, ipvs)
+kube_proxy_mode - ipvs обеспечивает более высокую пропускную способность и более быструю пересылку, чем iptables. подробнее: kubernetes.io/docs/concepts/services-networking/service
+**ПРОЧИТАТЬ СРАВНИТЬ УЗНАТЬ!!!!!**
 
-3.5 5 ster, -06:15
+kubeconfig_localhost: true - копирование настроек для доступа под администратором
+kubectl_localhost: true - копирование утилиты kubectl на тот сервер, где мы запускаем ansible.
+kubelet_authentication_token_webhook: true
+kubelet_authorization_mode_webhook: true - включение доступа к kubelet по токену.
+
+**group_vars/k8s-cluster/k8s-net-flannel.yml**
+flannel_backend_type: "host-gw" - режим host gateway
+flannel_interface_reqexp - указываем flannel на каком именно интерфейсе у нас прописан маршрут.
+
+**group_vars/k8s-cluster/addons.yml** - только для учебных целей
+ingress_nginx_enabled: true - включить установку контроллера
+ingress_nginx_host_network: true - указываем, что нужно использовать сеть типа host network. (Внутрь контейнера прокидывается сетевой namespace узла)
+ingress_nginx_configmap: - настройки ingress-controller
+  server-tokens: "False" - скрыть версию.
+  proxy-body-size: "2048M" - принимаем запросы до 2 Мб.
+  proxy-buffer-size: "16k" - настраиваем буффер приёма в 16 килобайт.
+  worker-shutdown-timeout: "180" - сколько секунд ждать завершения работы worker'ов при reload config.
+
+ingress_nginx_nodeselector:
+  node-role.kubernetes.io/ingress: "" - запускаться только на узлах с меткой *node-role,kubernetes.io/ingress*
+метка ставится на узлах. Пример:
+**group_vars/kube-ingress.yml**
+node_labels:
+  node-role.kubernetes.io/ingress: ""
+
+**taints vs. tolerations:**
+taints состоит из названия и значения, где через двоеточие указывается эффект. Пример:
+node_taints:
+  - "node-role.kubernetes.io/ingress-:NoSchedule" - запретить запуск нодов на узле. При этом старые ноды, работавшие на узле до taint'a продолжают на нём работать.
+**NoExecute - kubelet начинает эвакуировать поды, не имеющие tolerations.**
+
+**Пример прописывания tolerations к taints в подах:**
+**group_vars/kube-ingress.yml**
+ingress_nginx_tolerations:
+  - key: "node-role.kubernetes.io/ingress"
+    operator: "Exists"
+
+3.5 10 step

@@ -152,4 +152,34 @@ ingress_nginx_tolerations:
   - key: "node-role.kubernetes.io/ingress"
     operator: "Exists"
 
-3.5 10 step
+Для практики необходимо:
+1. Задать имя кластера в **group_vars/k8s-cluster.yml** (cluster_name)
+2. Уточнить настройки сетевого плагина.
+
+Уточнить термин **static pods**
+Поды, запущенные kubelet'ом из манифеста в директории etc/kubernates/manifest. **ЧТО ЭТО????!!!**
+
+#Обновление кластера
+Изучаем документацию (change log) - описываются все изменения, которые могут сломать кластер.
+Устанавливаем тестовый кластер.
+Обновляем его.
+Деплоим приложения, проверяем работу.
+Планируем время обновления.
+Делаем backup'ы.
+Обновляем прод по одной ноде.
+После каждой ноды проверяем работоспособность.
+
+Что обновляем: порядок
+etcd database
+Control plane: API, controller-manager, scheduler + kubelet
+kubelet on worker node
+*Системный софт:*
+kube-proxy
+CNI
+coredns, nodelocaldns
+ingress-nginx-controller
+certificate - при необходимости продлеваем сертификаты
+
+**ИЗУЧИТЬ ВСЕ НЕПОНЯТНЫЕ СЛОВА**
+
+3.9 2 step

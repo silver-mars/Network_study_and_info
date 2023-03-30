@@ -1,0 +1,63 @@
+#Daemonset нужен для того, чтобы автоматически запускать на каждой ноде под
+# kubernetes apply -f daemonset.yaml
+# kubernetes get daemonsets.apps
+# kubernetes get po
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app: node-exporter
+  name: node-exporter
+spec: #Отсутствует поле replicas, поскольку на каждой ноде - один под
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: node-exporter
+    template:
+      metadata:
+        labels:
+          app: node-exporter
+      spec:
+        containers:
+        - args:
+          - --web.listen-address=0.0.0.0:9101
+          - --path.procfs=/host/proc
+          - --path.sysfs=/host/sys
+          - --collector.filesystem.ignored-mount <...>
+           # git clone git@gitlab.slurm.io:edu/slurm.git
+           # cd slurm/practice/4.advanced-abstractions/4.1.daemonset
+          image: quay.io/prometheus/node-exporter:v0.16.0
+          imagePullPolicy: IfNotPresent
+          name: node-exporter
+          volumeMounts:
+          - mountPath: /host/proc # в директории /host/{{ name }} p.2
+            name: proc
+          - mountPath: /host/sys
+            name: sys
+          - mountPath: /host/root
+            name: root
+            readOnly: true
+        hostNetwork: true # указание, что этому контейнеру нужно использовать хостовые нэймспейсы линукса
+        hostPID: true # нужно для того, чтобы экспортер мог собирать данные о хосте
+        nodeSelector: # указываем на каких нодах запускать поды
+          beta.kubernetes.io/os: linux
+        securityContext:
+          runAsNonRoot: true # запускать не от рута
+          runAsUser: 65534 # запускать от юзера
+        tolerations: #taints - only on nodes. Tolerations - only on podes.
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+        volumes:
+        - hostPath: #Замонтировать директории с хоста: p.1
+            # Volume типа hostPath монтирует директорию с хоста в контейнер
+            path: /proc
+            type: ""
+          name: proc
+        - hostPath:
+            path: /sys
+            type: ""
+          name: sys

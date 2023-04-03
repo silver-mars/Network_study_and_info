@@ -240,4 +240,26 @@ PVC template
 * Kafka
 * ...
 
-4 part
+**Affinity**
+Affinity - это механизм, который позволяет нам указывать на каких нодах и каким образом поды будут запускаться в кластере Kubernetes
+Пример - когда некоторые поды нельзя запускать на одних и тех же нодах кластера.
+Ранее мы реализовывали nodeSelector - указывая на каких нодах следует запускать поды с определёнными метками.
+
+nodeAffinity - похожа на nodeSelector, за исключением более **гранулярной {????}** возможности (как и где) запускать поды.
+ignoredDuringExecution - если метки на нодах изменятся в тот момент, когда поды уже расположены на этих нодах, с подами ничего происходить не будет.
+requiredDuringScheduling - жёсткое ограничение - если под не соответствует требованиям, он всегда будет в состоянии pending.
+preferredDuringScheduling - мягкое ограничение - если под не соответствует требованиям, kubernetes запустит под на любой другой подходящей ноде.
+podAntiAffinity: - поды с определённой меткой нельзя запускать вместе на одной ноде.
+  preferredDuringSchedulingIgnoredDuringExecution: - стараться не запускать на одной ноде
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+            - key: app
+              operator: In
+              values:
+                - rabbitmq
+        topologyKey: kubernetes.io/hostname
+podAffinity: - всегда запускать или стараться запускать поды с определёнными метками вместе.
+
+ Next: 4.3

@@ -284,3 +284,88 @@ ttlSecondsAfterFinished - контролирует как долго ваш job 
 * successfulJobsHistoryLimit - сколько старых успешных Job'ов в успешном состоянии завершённых можно хранить.
 * failedJobsHistoryLimit - сколько старых неудачно завершённых job'ов можно хранить.
 
+#RBAC
+
+Role Base Access Control
+Существует 5 типов объектов, относящихся к этой категории:
+
+* Role
+* RoleBinding
+* ClusterRole
+* ClusterRoleBinding
+* ServiceAccount
+
+**Роль** представляет собой набор прав, которые есть у пользователя в кластере.
+Роль не говорит о том, у кого именно эти права есть, она создаёт набор прав.
+
+Пример команд для кластера:
+kubectl edit role -n ingress-nginx nginx-ingress 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    meta.helm.sh/release-name: nging-ingress
+    meta.helm.sh/release-namespace: ingress-nginx
+  creationTimestamp: "2022-09-15T11:41:54Z"
+  labels:
+    app: nginx-ingress
+    app.kubernetes.io/managed-by: Helm
+    chart: nginx-ingress-1.24.6
+    heritage: Helm
+    release: nginx-ingress
+  name: nginx-ingress
+  namespace: ingress-nginx
+  resourceVersion: "856"
+  uid: d12ddb8b-11d4-4b50-b307-42c66c5e2db7
+rules:
+- apiGroups:
+  - "" // Если пустая, значит apiGroups v1
+  resources:
+  - namespaces
+  verbs:
+  - get
+- apiGroupts:
+  - ""
+  resources:
+  - configmaps
+  - pods
+  - secrets
+  - endpoints
+  verbs:
+  - get
+  - list
+  - watch
+
+Это - некий набор разрешений, который потом уже можно будет навесить на какого-нибудь пользователя или сущность внутри kubernetes.
+
+**RoleBinding** - объект, который связывает роли и конкретных пользователей или группы пользователей.
+
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: nginx-ingress
+subjects: # Кому мы выдаём права
+- kind: ServiceAccount # Некая сервисная учётная запись внутри кубернетес
+  name: nginx-ingress
+  namespace: ingress-nginx
+- kind: User
+  name: jane # "name" is case sensitive
+  apiGroup: rbac.authorization.k8s.io
+- kind: Group
+  name: developer # for example organization in user certificate
+  apiGroup: rbac.authorization.k8s.io
+
+В самом кубернетес таких объектов как user, group - нет. Для их реализации необходимо устанавливать внешние механизмы аутентификации для кластера.
+
+
+ServiceAccount: некая учётная запись, нужная для работы внутри кластера kubernetes.
+При создании в кластере ServiceAccount ServiceAccountController автоматически создаст нам secret. Обычно ServiceAccount'ы нужны для авторизации тех приложений, которые работают внутри кластера kubernetes и обращаются к api kubernetes для каких-то взаимодействий с ним.
+При создании ServiceAccount'а в кластере автоматически создается секрет с токеном для доступа к Kube API серверу.
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: user
+
+

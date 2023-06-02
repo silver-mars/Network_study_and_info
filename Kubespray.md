@@ -498,4 +498,66 @@ spec:
 
 Если ваше приложение использует протокол HTTP, то в данном случае для доставки трафика из интернета стоит использовать Ingress Controller.
 
+# Ingress
+
+Трафик приходит на Ingress Controller, а оттуда уже распределяется по сервисам/приложениям, в зависимости от установленных на нём правил.
+Чисто технически Ingress Controller, если мы хотим обслуживать трафик извне, нужно выставить наружу.
+Обычно это делается с использованием директив Host Port.
+То есть несмотря на то, что Ingress Controller - это приложение, поднятое в контейнере, его порт нужно публиковать наружу.
+Тогда обращаясь по 80 порту ip-адреса хоста мы попадаем в Ingress Controller и как следствие - в наш кластер и приложение.
+
+**Ingress** - манифест в котором описаны правила, позволяющие обрабатывать внешний трафик.
+Манифест, описывающий правила маршрутизации HTTP-запросов.
+(С каких доменов, на какие эндпоинты и какие сервисы)
+**Ingress Controller** - приложение, обрабатывающее трафик или специальная проксирующая программа, которая направляет запросы из интернета в приложения.
+
+Пример:
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: my-ingress
+  annotations: # В каждом объекте и манифесте может быть задана аннотация
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS" # В рамках этой аннотации мы указываем, что наш backend принимает трафик по protocol HTTPS
+    # Таким образом мы можем задавать дополнительные настройки в аннотациях, их перечень есть в официальной документации.
+spec:
+  rules:
+  - host: foo.mydomain.com
+    http:
+      paths:
+      - backend:
+          serviceName: foo
+          servicePort: 8080
+  - host: mydomain.com
+    http:
+      paths:
+      - path: /bar/
+        backend:
+          serviceName: bar
+          servicePort: 8080
+
+**Создаём секрет с сертификатом**
+kubectl create secret tls ${CERT_NAME} --key ${KEY_FILE} --cert ${CERT_FILE}
+
+apiVersion: v1
+data:
+  tls.crt: base64 encoded cert
+  tls.key: base64 encoded key
+kind: Secret
+metadata:
+  name: secret-tls
+  namespace: default
+type: kubernetes.io/tls
+
+Имея этот сертификат, мы можем указать его в ingress:
+**Указываем сертификат в Ingress.**
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: tls-ingress
+spec:
+  tls:
+  - hosts:
+    - sslfoo.com
+    secretName: secret-tls
+    
 

@@ -560,4 +560,30 @@ spec:
     - sslfoo.com
     secretName: secret-tls
     
+# DNS in cluster kubernetes
 
+DNS в кластере kubernetes выполняет роль service discovery, то есть мы можем обращаться по DNS имени сервиса и попадать в группу подов.
+В кластере DNS как правило представлен CoreDNS, запущенный на 53-ем порту и мы обращаемся к нему, получая резолв наших запросов.
+Клиентский под, в котором работает наше приложение, делает DNS-запрос.
+DNS-запрос, в зависимости от устройства кластера, может попасть сперва в кэширующий локальный сервер (Local DNS Cache),
+либо, если его нет, запрос идёт сразу на основной сервер CoreDNS.
+
+В первом случае, если запись есть в кэше, то она сразу отдаётся приложению.
+Если записи нет, то Local DNS Cache запросит данные у Core DNS сервера, запишет данные себе в кэш и ответит в клиентский под.
+
+Local DNS Cache при этом общается с Core DNS через IP tables CoreDNS ClusterIP.
+
+В подах в файле /etc/resolv.conf содержится перенаправление адресов:
+root@lic-integrator-5bc4884df9-wqxxr:/etc# cat resolv.conf
+search integrators.svc.fsrap.ru svc.fsrap.ru fsrap.ru 
+nameserver 172.96.0.10 // указание ip-адреса Node Local DNS, если он есть
+options ndots:5 // эта настройка говорит, что если в имени файла содержится меньше 5 точек, то это внутренний запрос и его нужно прогонять через search, выискивая адресат внутри кластера.
+
+Эти настройки содержатся на ноде в Kubelet:
+cat /etc/kubernetes/kubelet.env | grep dns
+
+-cluster-dns=172.96.9.10 -cluster-domain=fsrap.ru
+
+Для того, чтобы отключить эти перенаправления и отправлять внешние запросы вовне, нужно подправить ConfigMap CoreDNS, включить autoPath Kubernetes,
+изменить параметр pod на verifier.
+**Загуглить pods verivier kubernetes autopath coredns**

@@ -34,3 +34,58 @@ helm uninstall kube-ops-view --namespace kube-system
 рекомендуется удалять через helm то, что было через него установлено.
 * Можно скачать все файлы этого чарта:
 helm pull stable/kube-ops-view --untar (если нужно сразу разархивировать
+
+**Commands**
+helm template . // указание корневого файла, где лежат templates. Воспроизводит как будет выглядеть файл
+helm template --name-template <abc>
+helm create <name> // создание стартера из шаблона helm, где <name> - название проекта и родительской директории
+
+Директория **helm/tests** - может быть заполнена тестами.
+Если это происходит, то в аннотации нужно указать: **helm.sh/hook: test**
+а в самом скрипте: **helm test <release_name>**
+
+Example:
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-credentials-test"
+  annotations:
+    "helm.sh/hook": test
+  spec:
+    template:
+      spec:
+        containers:
+        - name: main
+          image: {{ .Values.image }}
+          env:
+            etc.
+        command: ["sh", "-c", <...>]
+
+**Hooks**
+Используемых команд довольно много:
+1. pre-install, post-install, pre-uninstall, post-uninstall, pre-upgrade, post-upgrade, pre-rollback, post-rollback
+2. Это те же манифесты k8s
+3. Одинаковые хуки сортируются по весу и имени объекта (два pre-install, etc)
+4. Сперва отрабатывают объекты с меньшим весом (от - к +)
+5. Хуки не входят в релиз (helm.sh/hook-delete-policy)
+
+Example:
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}"
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+etc.
+
+
+

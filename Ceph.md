@@ -242,3 +242,202 @@ ceph osd tree           список OSD с весам алгоритма CRUSH
 ceph tell osd.X bench 	тестирование скорости доступа к osd.X
 
 https://docs.ceph.com/en/latest/rados/operations/monitoring/
+
+# Практическая работа с кубернетес
+
+Проверяем, что Ceph живой:
+ceph health
+ceph -s
+
+  cluster:
+    id:     77f26405-5f53-47c8-af1c-cc5bcdc198e1
+    health: HEALTH_OK
+
+  services:
+    mon: 3 daemons, quorum ingress-1,node-1,node-2 (age 26m)
+    mgr: ingress-1(active, since 25m), standbys: node-2, node-1
+    mds: cephfs:1 {0=ingress-1=up:active} 2 up:standby
+    osd: 3 osds: 3 up (since 24m), 3 in (since 24m)
+
+  data:
+    pools:   2 pools, 64 pgs
+    objects: 22 objects, 2.2 KiB
+    usage:   3.0 GiB used, 27 GiB / 30 GiB avail
+    pgs:     64 active+clean
+
+Создаем пул в Ceph'e для RBD дисков
+3) Запускаем на node-1
+**ceph osd pool create kube(имя) 32**
+После этой команды:
+    pools:   3 pools, 96 pgs
+**ceph osd pool application enable kube rbd**
+enabled application 'rbd' on pool 'kube'
+
+Получаем файл с настройками chart
+4) Переключаемся на master-1 и добавляем репозиторий с chart'ом, получаем набор переменных chart'a ceph-csi-rbd
+helm repo add ceph-csi https://ceph.github.io/csi-charts
+helm inspect values ceph-csi/ceph-csi-rbd > cephrbd.yml
+
+Заполняем переменные в cephrbd.yml
+5) Выполняем на node-1, чтобы узнать необходимые параметры:
+
+Получаем clusterID
+**ceph fsid**
+Получаем список мониторов кластера Ceph
+**ceph mon dump**
+
+6) Переключаемся снова на master-1 и правим файл cephrbd.yml
+
+Заносим свои значение clusterID, и адреса мониторов. Включаем создание политик PSP, и увеличиваем таймаут на создание дисков Список изменений в файле cephrbd.yml. Опции в разделах nodeplugin и provisioner уже есть в файле, их надо исправить так, как показано ниже.
+
+csiConfig:
+  - clusterID: "bcd0d202-fba8-4352-b25d-75c89258d5ab"
+    monitors:
+      - "v2:172.18.8.5:3300/0,v1:172.18.8.5:6789/0"
+      - "v2:172.18.8.6:3300/0,v1:172.18.8.6:6789/0"
+      - "v2:172.18.8.7:3300/0,v1:172.18.8.7:6789/0"
+
+nodeplugin:
+  podSecurityPolicy:
+    enabled: true
+
+provisioner:
+  replicaCount: 1
+  podSecurityPolicy:
+    enabled: true
+
+Устанавливаем чарт
+
+7) Выполняем команду
+helm upgrade -i ceph-csi-rbd ceph-csi/ceph-csi-rbd -f cephrbd.yml -n ceph-csi-rbd --create-namespace
+
+8) Создаем пользователя в ceph, с правами записи в пул kube
+
+Запускаем на node-1
+**ceph auth get-or-create client.rbdkube mon 'profile rbd' osd 'profile rbd pool=kube'**
+
+9) Смотрим ключ доступа для пользователя rbdkube
+**ceph auth get-key client.rbdkube**
+
+10) Заполняем манифесты
+Выполняем на master-1, подставляем значение ключа в манифест секрета.
+
+cd ~/slurm/practice/7.datastorage/rbd/
+vim secret.yaml
+
+11) Создаем секрет
+kubectl apply -f secret.yaml
+12) Получаем id кластера ceph
+ceph fsid
+13)  Заносим clusterid в storageclass.yaml
+14) Создаем storageclass
+kubectl apply -f storageclass.yaml
+
+15) Создаем pvc, и проверяем статус и наличие pv
+
+kubectl apply -f pvc.yaml
+kubectl get pvc
+kubectl get pv
+
+16) Получаем список томов в пуле и просматриваем информацию о томе
+
+Выполняем на node-1
+rbd ls -p kube
+rbd -p kube info csi-vol-eb3d257d-8c6c-11ea-bff5-6235e7640653
+
+# Практика с установкой CephFS
+
+1) Заходим на master-1 и получаем переменные chart'a ceph-csi-cephfs
+
+(ставить будем версию 2.1.2, потому что в версиях 3.x.x опять сломали изменение размера тома)
+
+helm repo add ceph-csi https://ceph.github.io/csi-charts
+helm inspect values ceph-csi/ceph-csi-cephfs --version 2.1.2 >cephfs.yml
+
+2) Выполняем на node-1, чтобы узнать необходимые параметры:
+
+ceph fsid
+ceph mon dump
+
+3) Возвращаемся на master-1 и правим файл cephfs.yml
+
+nodeplugin:
+  podSecurityPolicy:
+    enabled: true
+
+provisioner:
+  replicaCount: 1
+  podSecurityPolicy:
+    enabled: true
+
+Устанавливаем чарт
+4) Запускаем на master-1
+
+helm upgrade -i ceph-csi-cephfs ceph-csi/ceph-csi-cephfs -f cephfs.yml -n ceph-csi-cephfs --create-namespace  --version 2.1.2 
+
+5) Создаем пользователя для cephfs
+Возвращаемся на node-1
+
+ceph auth get-or-create client.fs mon 'allow r' mgr 'allow rw' mds 'allow rws' osd 'allow rw pool=cephfs_data, allow rw pool=cephfs_metadata'
+
+6) Посмотреть ключ доступа для пользователя fs
+ceph auth get-key client.fs
+
+7) Заполняем манифест secret.yml
+Выполняем на master-1
+
+Заносим имя пользователя fs и значение ключа в
+
+adminID: fs
+adminKey:
+
+8) Создаем секрет
+
+kubectl apply -f secret.yaml
+
+10) Заносим clusterid в storageclass.yaml
+11) Создаем storageclass
+
+Проверяем создание директории в cephfs
+
+13) монтируем CephFS на node-1
+
+Выполняем на node-1
+
+Точка монтирования
+
+mkdir -p /mnt/cephfs
+
+Создаем файл с ключом администратора
+
+ceph auth get-key client.admin >/etc/ceph/secret.key
+
+Добавляем запись в /etc/fstab
+!!! Изменяем ip адрес на адрес узла node-1
+
+echo "172.<xx>.<yyy>.6:6789:/ /mnt/cephfs ceph name=admin,secretfile=/etc/ceph/secret.key,noatime,_netdev 0 2">>/etc/fstab
+
+
+mount /mnt/cephfs
+
+14) Идем в каталог /mnt/cephfs и смотрим что там есть
+
+cd /mnt/cephfs
+
+15) Изменяем размер тома в манифесте pvc.yaml
+
+Возвращаемся на master-1
+
+vi pvc.yaml
+
+resources:
+  requests:
+    storage: 7Gi
+
+kubectl apply -f pvc.yaml
+
+16) Проверяем на node-1
+
+yum install -y attr
+
+getfattr -n ceph.quota.max_bytes <каталог-с-данными>

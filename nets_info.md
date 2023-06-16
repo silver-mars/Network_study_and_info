@@ -3472,5 +3472,49 @@ ETag удобно применять, если web-сервер передаёт
 Эти программы часто обращаются к базам данных или другим ресурсам и работают достаточно медленно.
 Поэтому кэширование результатов работы этих программ в виде готовой web-страницы на обратном прокси-сервере существенно понижает скорость загрузки web-страниц.
 
+# Email
+
+Электронная почта (email) – технология передачи и получения электронных сообщений через компьютерную сеть.
+
+Основные компоненты электронной почты:
+Агент пользователя (MUA, Mail User Agent) - клиент электронной почты.
+Агент передачи почты (MTA, Mail Transfer Agent) - программа передачи почты от клиента на сервер и между почтовыми серверами.
+Агент доставки почты (MDA, Mail Delivery Agent) - программа записи сообщений в почтовые ящики получателей.
+
+Адрес электронной почты состоит из двух частей: идентификатор пользователя и доменное имя. В качестве разделителя используется символ @ (коммерческая эт). Пример:
+networkcourse@mail.ru.
+
+Основные протоколы электронной почты:
+**SMTP** – Simple Mail Transfer Protocol (используется для передачи сообщения как от MUA, так и от MTA).
+Для чтения писем из хранилища сообщений используются два протокола:
+**POP3** – Post Office Protocol 3 (передаёт все сообщения из хранилища сообщений на локальный компьютер пользователя и только после этого показывает их в агенте).
+Удаляет из хранилища все письма, которые были доставлены пользователю.
+**IMAP** – Internet Message Access Protocol (рассчитан на работу напрямую с хранилищем сообщений. Письма после прочтения пользователем не удаляются из хранилища).
+
+Для определения почтового сервера получателя используется система DNS, запись типа MX (Mail eXchange).
+Просмотр записей: **nslookup -type=mx gmail.com**
+
+
+Server:		127.0.0.53
+Address:	127.0.0.53#53
+
+Non-authoritative answer:
+gmail.com	mail exchanger = 20 alt2.gmail-smtp-in.l.google.com.
+gmail.com	mail exchanger = 30 alt3.gmail-smtp-in.l.google.com.
+gmail.com	mail exchanger = 10 alt1.gmail-smtp-in.l.google.com.
+gmail.com	mail exchanger = 5 gmail-smtp-in.l.google.com.
+gmail.com	mail exchanger = 40 alt4.gmail-smtp-in.l.google.com.
+
+Authoritative answers can be found from:
+alt2.gmail-smtp-in.l.google.com	internet address = 173.194.202.26
+alt2.gmail-smtp-in.l.google.com	has AAAA address 2607:f8b0:400e:c00::1b
+alt3.gmail-smtp-in.l.google.com	internet address = 142.250.141.26
+alt3.gmail-smtp-in.l.google.com	has AAAA address 2607:f8b0:4023:c0b::1a
+alt1.gmail-smtp-in.l.google.com	internet address = 142.250.157.27
+alt1.gmail-smtp-in.l.google.com	has AAAA address 2404:6800:4008:c13::1b
+gmail-smtp-in.l.google.com	internet address = 64.233.161.26
+gmail-smtp-in.l.google.com	has AAAA address 2a00:1450:4010:c01::1b
+alt4.gmail-smtp-in.l.google.com	internet address = 142.250.115.26
+alt4.gmail-smtp-in.l.google.com	has AAAA address 2607:f8b0:4023:1004::1b
 
 

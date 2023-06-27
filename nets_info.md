@@ -3543,5 +3543,8 @@ SMTP работает в текстовом режиме, используетс
 * DATA - начало передачи письма
 * QUIT - выход
 
-
+# Simple kub commands:
+feature alpha debug
+Starting with 3.21 version only debug:
+kubectl debug -n svs-test front-filter-6775b6fd8c-zh8fw -it --image=busybox --target=front-filter -- /bin/sh
 

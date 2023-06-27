@@ -63,6 +63,81 @@ Controller-manager генерирует описания replicaset'ов и pod'
 * Requested resources
 * Priority Class
 
+**Affinity**
+Affinity - это механизм, который позволяет нам указывать на каких нодах и каким образом поды будут запускаться в кластере.
+
+Affinity:
+  NodeAffinity: // позволяет гранулярно управлять процессом запуска подов. 
+
+**Taints** - указывается на ноде и указывает Scheduler'у запрет на размещение на нём всех подов, кроме тех, у кого есть **tolerations**.
+taints состоит из названия, значения и через двоеточие - эффекта:
+**key=value:effect**
+**NoSchedule** - запрещает запускать новые поды на узле. Старые при этом продолжают работу.
+**NoExecute** - kubelet начинает эвакуировать поды с узла, которые не имеют tolerations против taint'a.
+
+Пример:
+**node_taints:**
+  - "node-role.kubernetes.io/ingress=:NoExecute"
+
+**ingress_nginx_tolerations:**
+  - key: :node-role.kubernetes.io/ingress"
+    operator: "Exists"
+
+Tolerations бывает двух видов:
+
+1. Equal – tolerations сработает только при полном совпадении с key, value и effects
+
+    tolerations:
+    - key: "key1"
+    operator: "Equal"
+    value: "value1"
+    effect: "NoSchedule"
+
+2. Exist – toleration сработает, если есть совпадение с key и effects
+
+    tolerations:
+    - key: "key1"
+    operator: "Exists"
+    effect: "NoSchedule"
+
+Детали см. оф. документацию: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+Полезный пример:
+**kubectl taint nodes node1 key1=value1:NoSchedule**
+
+**NodeSelector**
+Самый простой способ управления аллокацией выполняется в два этапа:
+1. Сначала надо поставить метки на node командой label:
+**kubectl label nodes awesome_node disk=hdd**
+
+Проверить, какие метки уже есть можно через kubectl describe nodes
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    env: test
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  nodeSelector:
+    disk: hdd
+
+Для deployment nodeSelector передается в шаблон pod-а, как обычно. Не смотря на удобство и прямолинейность подхода – nodeSelector имеет три минуса, один из которых:
+nodeSelector применяется в момент аллокации пода и бесполезен, если под уже аллоцирован. Если вам нужно “освободить” ноду – придется поставить на нее метку и затем выкинуть оттуда поды командой **drain.**
+
+2. Вариант был описан выше, взятый из оф. документации:
+**kubectl taint nodes nodeName taintKey=taintValue:taintEffect**
+
+taintKey и taintValue – это просто метки, они могут быть произвольными. У taintEffect есть 3 возможных значения:
+
+NoSchedule – новые поды не будут аллоцироваться, однако существующие продолжат свою работу
+PreferNoSchedule – новые поды не будут аллоцироваться, если в кластере есть свободное место
+NoExecute – все запущенные поды без tolerations должны быть убраны
+
+Более подробные нюансы см. https://prudnitskiy.pro/post/2021-01-15-k8s-pod-distribution/
+
 **Priority Class**
 Подам можно выставлять приоритет. Эвакуируются и запускаются в первую очередь поды с более высоким приоритетом.
 Если ресурсов не хватает - в первую очередь гасятся поды с более низким приоритетом.

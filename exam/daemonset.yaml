@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app: myproxy
+  name: myproxy
+  namespace: myproxy
+spec:
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: myproxy
+  template:
+    metadata:
+      labels:
+        app: myproxy
+    spec:
+      containers:
+        - name: myproxy
+          image: nginx:1.13
+          ports:
+          - containerPort: 80
+            hostPort: 8080

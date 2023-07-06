@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: awesome-ingress
+spec:
+  rules: # правило ingress'a состоит из host'a и списка путей. (обычно привязываем к нему бэк)
+  - host: ingress-test.s042586.edu.slurm.io
+    http:
+      paths: # в зависимости от путей можно направлять трафик в различные сервисы.
+      - path: /1
+        pathType: Prefix
+        backend:
+          service:
+            name: ingress-test-1
+            port:
+              number: 80
+  - host: ingress-test.s042586.edu.slurm.io
+    http:
+      paths:
+      - path: /2
+        pathType: Prefix
+        backend:
+          service:
+            name: ingress-test-2
+            port:
+              number: 80
+  - host: ingress-test.s042586.edu.slurm.io
+    http:
+      paths:
+      - backend:
+          serviceName: my-service-1
+          servicePort: 80 # В этом примере запрос направляем в сервис в 80-ый порт
+
+Команда **kubectl get ing** - показывает какие хосты и порты обрабатывает ingress.

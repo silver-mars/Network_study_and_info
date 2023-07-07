@@ -1,3 +1,7 @@
+Встроенные подсказки:
+**kubectl explain pod** - можно посмотреть описание всех доступных полей в pod'e
+**kubectl explain pod.spec** - или внутри spec'а pod.
+
 Command указывается внутри описания контейнера. На одном уровне с image и name.
 spec:
   containers:

@@ -283,14 +283,61 @@ DNS имя нужно чтобы иметь возможность обрати�
 
 # Interaction scheme
 
+**Kube-API**
 1. User создаёт replicaset. **kubectl apply -f replicaset.yaml**
 2. Эта информация попадает в **Kube-API server**.
 3. Kube-API server записывает полученную информацию в **ETCD**. (API-server - единственный компонент, который взаимодействует с ETCD).
 4. После этого отдаёт отчёт юзеру, "replicaset created".
 
+**Controller-Manger**
 5. Replicaset Controller-Manager, который подписан на соответствующие ему события (watch (create new replicaset)), видит появление нового объекта replicaset в Kube-API.
 6. **create pods** Replicaset Controller-Manager - генерирует описание подов к этому replicaset'у и передаёт это описание в Kube-API.
 7. Kube-API записывает эту информацию в ETCD
 8. После чего отчитывается Controller-Manager'у, говорит, что он всё записал.
+На этой стадии в ETCD хранится replicaset со сгенерированным Controller-Manager'ом описанием подов.
+
+**Scheduler**
+9. Scheduler (как и остальные компоненты кластера) постоянно смотрит в API сервер **watch (new pods)** и видит создание новых подов.
+10. **bind pods** В соответствии со своими правилами выбирает ноду, на которой можно разместить под. Передаёт эту информацию в API сервер (поле NodeName)
+11. Kube-API записывает эту информацию в **ETCD**, обновляя существующий манифест.
+12. Отчитывается перед scheduler'ом, что работа сделана.
+
+**Kubelet**
+13. Kubelet **watch (bound pods)**. Триггер - появление пода, у которого в поле **NodeName** находится то имя ноды, на которой он работает.
+14. Kubelet выполняет **docker run** со всей необходимой для запуска информацией (взаимодействие по API), получая обратную связь от докера.
+15. Kubelet транслирует статус пода в API server.
+16. Kube-API записывает информацию в ETCD и отдаёт обратную связь kubelet'у.
+
+# IP address scheme
+Container Runtime Interface.
+Container Network Interface.
+
+1. Pod scheduled on the node.
+2. Kubelet calls CRI plugin to create a pod.
+3. CRI plugin creates pod sandbox ID and pod network namespace.
+4. CRI plugin calls CNI plugin with pod network namespace and pod sandbox ID.
+5. CNI plugins configure the pod network
+Example: **Flannel CNI plugin**
+Flannel fetches **podCIDR** for the node and other cluster network metadata from apiserver and writes it to subnet.env file (/run/flannel/subnet.env)
+Flannel CNI plugin configures and calls **Bridge CNI plugin**
+Bridge CNI plugin creates the cni0 bridge on the host if it doesn't exist.
+It creates a veth device with one end inserted in to the container network namespace and the other end connected to the cni0 bridge.
+It then colls the configured IPAM plugin.
+host-local IPAM CNI plugin returns the IP address for the container and the gateway (cni0 bridge that the container uses as gateway).
+IP address for the container is assigned to the pod and the bridge plugin assigns the gateway IP address to the cni0 bridge.
+All the assigned IP addresses are stored locally on the disk under /var/lib/cni/networkd/cni0/
+Returns an IP for pod
+6. Creates Pause container and adds it to the created network namespace
+7. Kubelet calls CRI plugin to fetch the application container image
+8. CRI fetches the application container image using containerd.
+9. Kubelet calls CRI plugin to start the application container
+10. CRI plugin uses containerd to start and configure the application container in pod's cgroup and namespaces.
+
+У каждого сетевого провайдера есть свой агент. Он устанавливается во все узлы Kubernetes и отвечает за сетевую настройку pod'ов. Этот агент идет либо в комплекте с конфигом CNI, либо самостоятельно создает его на узле. Конфиг помогает CRI-плагину установить, какой плагин CNI вызывать.
+
+Местонахождение конфига CNI можно настроить; по умолчанию он лежит в /etc/cni/net.d/<config-file>. Администраторы кластера также отвечают за установку плагинов CNI на каждый узел кластера. Их местонахождение также настраивается; директория по умолчанию — /opt/cni/bin.
+
+**Взаимодействие между CNI-плагинами**
+Существуют различные плагины CNI, задача которых — помочь настроить сетевое взаимодействие между контейнерами на хосте.
 
 

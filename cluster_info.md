@@ -190,6 +190,9 @@ Scheduler делает watch в Kube-API. Как только видит, что
 
 # Kube-proxy
 
+Доп. статья:
+https://habr.com/ru/companies/ruvds/articles/442646/
+
 Также как и остальные компоненты кластера смотрит в Kube-API server.
 Как и Kubelet стоит на всех серверах.
 Только один Controller-manager одновременно может быть мастером и выполнять работу в кластере

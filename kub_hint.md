@@ -48,3 +48,16 @@ livenessProbe - контролирует, что приложение норма
 
 Самый быстрый способ в случае проблем с controlplane кластера продиагностировать неисправность - это выполнить команду
 **kubectl get componentstatuses**
+
+Способ менять максимум запущенных подов:
+
+/var/lib/kubelet - конфиг kubelet.
+ps -ef | grep -i kubelet // may be now path is /var/lib/kubelet/config.yaml
+ 
+maxPods: 50
+sudo systemctl restart kubelet
+
+Проверка:
+kubectl describe nodes name_node  | grep -i "Capacity\|Allocatable" -A 6
+
+kubelet --max-pods // Also variant

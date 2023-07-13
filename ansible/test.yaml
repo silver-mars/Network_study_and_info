@@ -1,0 +1,17 @@
+---
+- name: extract user name
+  hosts: test
+  gather_facts: false
+  tasks:
+   - name: execute simple script
+     shell: whoami
+     register: result
+
+   - name: test debug command
+     debug: var=result.stdout
+
+   - set_fact:
+       user={{ result.stdout }}
+
+   - debug: var=user
+     run_once: true

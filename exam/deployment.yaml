@@ -20,6 +20,9 @@ spec:
       containers:
       - image: debian:jessie
         name: deb-jessie
+        env:
+        - name: USERNAME
+          value: terminator
         command: ["sh", "-c", 'while true; do echo "Hello, ${USERNAME}!"; sleep 10; done']
         ports:
         - containerPort: 80

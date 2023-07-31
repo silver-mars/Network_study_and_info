@@ -399,4 +399,5 @@ https://git-scm.com/book/ru/v2
 Запрос: я сделал такие-то коммиты, посмотрите, прежде чем смёрджить.
 
 
-
+# Git
+https://webhamster.ru/mytetrashare/index/mtb0/1403437294p5cpqb1b39?ysclid=lk9d1z5j5z731002221

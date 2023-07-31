@@ -8,16 +8,72 @@
 **Современные облачные сервисы**
 Образование облачных сервисов
 IaaS - Infrastructure
-PaaS
-SaaS
+PaaS - Platform
+SaaS - Software
 * aaS - идея, Everything as a Service.
-DataBase aaS, Loging aaS, Networking aas, Monitoring, etc.
+Data Base aaS, Logging aaS, Networking aas, Monitoring, etc.
 
-23:45
+Приложения
+Данные приложений
+Библиотеки окружения
+Экземпляры VM
+Гипервизоры
+Дисковые накопители
+Сетевой слой
+
+**Достоинства облачных систем**
+* Скорость выделения ресурсов
+* Экономия ресурсов
+Облачные платформы заведомо дороже по соотношению выделяемых ресурсов.
+Купить свой сервер, физически оборудовать его - может быть дешевле, но он быстро подешевеет, выйдет что-нибудь более мощное и производительное, поддержка также требует временных ресурсов инженеров и т. д.
+Если проект для пробы и не известно взлетит ли он, экономически быстрее и выгоднее прогнать его в облаке.
+* Возможность создания отказоустойчивых сервисов
 
 **Обзор облачного провайдера Google cloud platform**
+GCP предоставляет сервисы:
+* IaaS,
+* PaaS.
+
+**Google Compute**
+
+**Compute Engine**
+* App Engine
+* Container Engine
+* Cloud functions
+
+**Storage**
+* Cloud storage - объектное хранилище.
+* Block storage
+
+**Networking**
+* Virtual Private Cloud networking (VPC)
+* Cloud interconnect
+* Cloud DNS
+
+**Особенности GCP**
+* Высокотехнологичные датацентры
+* Получасовая оплата ресурсов
+* Свои типы инстансов
+* Надстройки над сетевой моделью провайдера (кросс-региональные LB, сквозной шифрованный трафик между регионами).
 
 **Способы удалённого подключения и управления виртуальными машинами**
+Система управления правами (IAM)
+Identity and Access Management:
+у кого есть доступ,
+к каким ресурсам,
+с какими правами.
+
+**Средства управления**
+Встроенная консоль и Dashboard (GUI)
+SDK/CLI
+* gcloud/gsutil
+* Cloud shell
+REST API и библиотеки.
+
+**Useful materials**
+* https://cloud.google.com/training
+* The Practice of Cloud System Administration: DevOps and SRE Practices for Web Services - book
+* Google Cloud Platform awesome list
 
 
 

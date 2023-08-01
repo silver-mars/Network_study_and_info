@@ -75,5 +75,12 @@ REST API и библиотеки.
 * The Practice of Cloud System Administration: DevOps and SRE Practices for Web Services - book
 * Google Cloud Platform awesome list
 
+**Cloud console**
 
+**Инструменты управления:**
 
+* Dashboard (GUI)
+* SDK/CLI
+* gcloud
+* cloud shell
+* REST API и библиотеки + сторонние инструменты и сервисы для них

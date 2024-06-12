@@ -23,10 +23,10 @@ openssl genpkey -algorithm RSA -out your_key.key
 openssl req -newkey rsa:2048 -sha256 -nodes -config config.cnf -out kafka.csr -keyout kafka.key
 ```
 **Используемые опции:**
-1. openssl-req:
+1. openssl-req:<br>
 **nodes/noenc**<br>
  - -nodes (This option is deprecated since OpenSSL 3.0; use -noenc instead).
- - -noenc (If this option is specified then if a private key is created it will not be encrypted).
+ - -noenc (If this option is specified then if a private key is created it will not be encrypted).<br>
 Указывает, что приватному ключу не нужно задавать парольную фразу.<br>
 В случае, если эту опцию опустить, во-первых, у ключа в формате PEM заголовок и концевик будут иметь дополнительный маркер encrypted:<br>
 -----BEGIN ENCRYPTED PRIVATE KEY-----<br>
@@ -35,12 +35,12 @@ openssl req -newkey rsa:2048 -sha256 -nodes -config config.cnf -out kafka.csr -k
 ```
 openssl rsa -in kafka.key
 ```
-Будет запрошена заданная при создании парольная фраза, и если она будет введена успешно заголовок и концевик также будут изменены:<br>
+Будет запрошена заданная при создании парольная фраза. При её успешном введении заголовок и концевик будут изменены на:<br>
 -----BEGIN PRIVATE KEY-----<br>
 -----END PRIVATE KEY-----<br>
 И ключ будет расшифрован корректно.<br>
 
-2. **-new**:
+2. **-new**:<br>
 Эта опция генерирует создание файл запроса на подпись сертификата — Certificate Signing Request (CSR).<br>
 
 **-newkey args [rsa:nbit - example]**<br>

@@ -1,5 +1,5 @@
 В этот раздел я помещаю написанные Jenkins jobs, которые помогают точнее локализовать где именно происходит проблема в процессе настройки CI/CD с помощью Jenkins.<br>
-[Проверка доступа в Nexus](#jen_nexus-groovy)<br>
+[Проверка доступа в Nexus](#jen_nexusgroovy)<br>
 [Проверка доступа в кластер Openshift](#jen_osegroovy)<br>
 Уточнить тип item.<br>
 Навскидку - pipeline script<br>
@@ -7,7 +7,7 @@
 
 # jen_nexus.groovy
 
-Это scripted pipeline, метка агента задаётся в разделе node.<br>
+Это scripted pipeline, node label задаётся в разделе node.<br>
 (Сделать вынос в переменные).<br>
 Может помочь для диагностики есть ли соединение и доступ у Jenkins agent'a к требуемому пространству Nexus в случаях, когда на этапе забора/публикации артефактов возникает какая-то ошибка.<br>
 
@@ -20,7 +20,7 @@
 # jen_ose.groovy
 
 Это declarative pipeline для проверки возможности Jenkins agent'a коннектиться к нужному api серверу k8s и проводить деплой нужных ресурсов.<br>
-К последней операции в stage:
+К последней операции:
 ```
 oc api-resources --namespaced=true -o wide
 ```

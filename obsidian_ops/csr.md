@@ -54,4 +54,35 @@ newkey указывает, что нужно создать новую пару 
 openssl req -key domain.key -new -out domain.csr
 ```
 
-# Инфа о файле конфиг будет здесь.
+# Инфа о файле конфиг будет здесь
+(coming soon)
+
+# Проверка csr
+
+Проверка csr осуществляется командой:
+```
+openssl req -in your_csr.csr -noout -text
+```
+**Разбор опций**
+
+* **-in** filename<br>
+Указывает входное имя файла для чтения csr<br>
+* **-noout**<br>
+Эта опция предотвращает вывод CSR,<br>
+т. е. не будут напечатаны строки вида:<br>
+-----BEGIN CERTIFICATE REQUEST-----<br>
+base64 is here.<br>
+-----END CERTIFICAT<br>E REQUEST-----
+* **-text**
+Напечатать вывод csr в текстовом виде<br>
+(Если не добавит эту опцию, всё будет закодировано и не человекопонятно. См. base64 несколькими строками выше.<br>
+В то время, как с этой опцией вывод будет структурирован и упорядочен, пример:<br>
+```
+Certificate Request:
+    Data:
+        Version: 1 (0x0)
+        Subject: OU = 001, O = Something, L = London, ST = London, C = EN, CN = Something Org
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (4096 bit)
+```

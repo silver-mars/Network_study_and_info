@@ -20,3 +20,7 @@ PS1="%{$fg[green]%}%m@%n%{$fg[red]%}$ %{$fg[blue]%}%d %{$fg[yellow]%}>%{$reset_c
 alias ls='ls --color=auto'
 alias ll='ls -l'
 alias la='ls -a'
+
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'

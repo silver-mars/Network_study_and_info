@@ -2,9 +2,14 @@
 [Проверка доступа в Nexus](#jen_nexusgroovy)<br>
 [Проверка доступа в кластер Openshift](#jen_osegroovy)<br>
 [Проверка доступа в кластер Kubernetes](#jen_kubegroovy)<br>
-Уточнить тип item.<br>
-Навскидку - pipeline script<br>
-На будущее - докинуть Jenkinsfile из Multibranch pipeline.<br>
+
+## Предварительные требования
+Должен быть установлен плагин **pipeline**, позволяющий конфигурировать конвейер в виде кода на groovy.<br>
+Для этого нужно выбрать **New item** с типом **pipeline**.<br>
+После чего можно как поместить весь код в самом Jenkins (**configure**, раздел **pipeline**, и в поле **definition** выбрать **Pipeline script**<br>
+Так и указать путь к исполняемому файлу в гите или иной используемой VCS.<br>
+(
+(На будущее - докинуть Jenkinsfile из Multibranch pipeline в этот раздел).<br>
 
 **Предварительный глоссарий**.<br>
 Во всех примерах используется механизм определения версии инструмента из [custom tool plugin Jenkins](https://github.com/jenkinsci/custom-tools-plugin/tree/master)<br>

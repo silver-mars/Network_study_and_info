@@ -6,7 +6,7 @@
 * **git**
 * **locate** - для быстрого и удобного поиска файлов на локальном АРМ.
 * **openssh-server**
-* **jq** - a command-lineJSON processing tool.
+* **jq** - a command-line JSON processing tool.
 * **zsh** - пока использую в качестве эксперимента на личном АРМ.
 * **tree**
 

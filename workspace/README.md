@@ -2,7 +2,7 @@
 Список ПО, необходимого для работы и не требующего особенных настроек смотрите [здесь](package_list.md)<br>
 Ниже приведён перечень ПО, не входящего в официальные поддерживаемые репозитории debian/ubuntu.<br>
 
-[markdown reader](#markdown-cli-reader)
+[markdown reader](#markdown-cli-reader)<br>
 [vim spelling](#downloading-dictionaries-for-vim-spelling)
 
 ## Markdown CLI reader

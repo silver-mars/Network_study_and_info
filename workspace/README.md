@@ -2,7 +2,10 @@
 Список ПО, необходимого для работы и не требующего особенных настроек смотрите [здесь](package_list.md)<br>
 Ниже приведён перечень ПО, не входящего в официальные поддерживаемые репозитории debian/ubuntu.<br>
 
-**Markdown CLI reader**<br>
+[markdown reader](#markdown-cli-reader)
+[vim spelling](#downloading-dictionaries-for-vim-spelling)
+
+## Markdown CLI reader
 Glow is a terminal based markdown reader for render md in CLI<br>
 https://github.com/charmbracelet/glow<br>
 ```
@@ -16,10 +19,11 @@ sudo apt update && sudo apt install glow
 :vert term glow %
 ```
 
-**Настройка проверки правописания в vim:**
+## Downloading dictionaries for vim spelling
 ```
 mkdir -p ~/.vim/spell/
 cd ~/.vim/spell
 wget http://ftp.vim.org/vim/runtime/spell/ru.utf-8.sug
 wget http://ftp.vim.org/vim/runtime/spell/ru.utf-8.spl
 ```
+(Сами опции настройки есть в .vimrc).

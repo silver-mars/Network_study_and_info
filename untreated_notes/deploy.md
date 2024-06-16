@@ -1,4 +1,4 @@
-kubectl create secret docker-registry (специальный тип секретов, в котором хранятся данные для авторизации различных docker registry) xpaste-gitlab-registry (имя секрета) (менять это имя не нужно, оно потом будет использоваться для деплоя приложения) --docker-server registry.slurm.io --docker-email 'student@slurm.io' --docker-username 'gitlab+deploy-token-1336' (первая строка в интерфейсе гитлаба, которую он нам выдал после создания деплой-токена) --docker-password 'srme2kxfasdfbkdfsvjoe' (вторая генерируемая строка после созданий деплой-токена) --namespase s042586-xpaste-production
+kubectl create secret docker-registry (специальный тип секретов, в котором хранятся данные для авторизации различных docker registry) sand-gitlab-registry (имя секрета) (менять это имя не нужно, оно потом будет использоваться для деплоя приложения) --docker-server your.registry.io --docker-email 'yourname@mail' --docker-username 'gitlab+deploy-token' (первая строка в интерфейсе гитлаба, которую он нам выдал после создания деплой-токена) --docker-password 'srme2kxfasdfbkdfsvjoe' (вторая генерируемая строка после созданий деплой-токена) --namespase testus
 
 deploy:
   stage: deploy
@@ -7,7 +7,7 @@ deploy:
     name: production
   script:
     // подключаемся к кластеру
-    - kubectl config set-cluster k8s (указываем имя адреса, оно не принципиально) --insecure-skip-tls-verify=tyue --server=$K8S_API_URL (указываем адрес, по которому подключаемся)
+    - kubectl config set-cluster k8s (указываем имя кластера, оно не принципиально) --insecure-skip-tls-verify=tyue --server=$K8S_API_URL (указываем адрес, по которому подключаемся)
     - kubectl config set-credentials ci (создаём юзера) --token=$K8S_CI_TOKEN (Подключаем его с токеном из этой переменной)
     // задаём контекст:
     - kubectl config set-context ci --cluster=k8s (используем кластер, указанный на первом скрипте) --user=ci (и юзера, созданного во втором скрипте)

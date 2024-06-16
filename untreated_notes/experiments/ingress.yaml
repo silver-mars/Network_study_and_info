@@ -4,7 +4,7 @@ metadata:
   name: awesome-ingress
 spec:
   rules: # правило ingress'a состоит из host'a и списка путей. (обычно привязываем к нему бэк)
-  - host: ingress-test.s042586.edu.slurm.io
+  - host: ingress-test.apps.terrus01
     http:
       paths: # в зависимости от путей можно направлять трафик в различные сервисы.
       - path: /1
@@ -14,7 +14,7 @@ spec:
             name: ingress-test-1
             port:
               number: 80
-  - host: ingress-test.s042586.edu.slurm.io
+  - host: ingress-test.apps.terrus02
     http:
       paths:
       - path: /2
@@ -24,7 +24,7 @@ spec:
             name: ingress-test-2
             port:
               number: 80
-  - host: ingress-test.s042586.edu.slurm.io
+  - host: ingress-test.apps.terrus03
     http:
       paths:
       - backend:

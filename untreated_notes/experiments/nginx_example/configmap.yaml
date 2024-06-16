@@ -11,6 +11,6 @@ data:
         default_type text/plain; 
  
         location / { 
-            return 200 'I am 1.12\n'; 
+            return 200 'Experiment version 1.12\n'; 
         } 
     } 

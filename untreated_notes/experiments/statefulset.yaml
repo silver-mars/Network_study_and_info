@@ -84,6 +84,3 @@ spec:
             requests:
               storage: 1Gi
           storageClassName: local-storage
-etc.
-git clone git@gitlab.slurm.io:edu/slurm
-cd slurm/practice/4.advanced-abstractions/4.2.statefulset

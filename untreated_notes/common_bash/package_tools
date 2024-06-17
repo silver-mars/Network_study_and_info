@@ -22,3 +22,5 @@ man update-alternatives
 update-alternatives --install [место, где создастся символическая ссылка] name [ссылка на исходник] int
 sudo update-alternatives --install /opt/utm/jre/ utm_java /opt/utm/jre/bin/java 1
 
+apt show kafkacat - показать информацию о пакете
+apt-cache depends kafkacat - показать зависимости пакета

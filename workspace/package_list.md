@@ -9,6 +9,7 @@
 * **jq** - a command-line JSON processing tool.
 * **zsh** - пока использую в качестве эксперимента на личном АРМ.
 * **tree**
+* **kafkacat** - если используется Apache Kafka
 
 ## GUI
 Если используется Desktop Environment:<br>

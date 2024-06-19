@@ -54,6 +54,8 @@ highlight SpellBad ctermfg=Red
 autocmd BufRead,BufNewFile *.py nmap <F5> <Esc>:w<CR>: !clear; python3 %<CR>
 " Running bash script if file is .sh
 autocmd BufRead,BufNewFile *.sh nmap <F5> <Esc>:w<CR>: !clear; bash %<CR>
+" Running yaml lint if file is .yaml
+autocmd BufRead,BufNewFile *.yaml,*.yml nmap <F5> <Esc>:w<CR>: !clear; yamllint %<CR>
 
 " New options
 " Включение синтаксиса groovy in Jenkinsfile

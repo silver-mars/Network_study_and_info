@@ -3,7 +3,7 @@
 В целом, концепция Admission controllers состоит из следующих основных этапов:
 1. API HTTP handler
 2. Authentification/Authorization
-3. Mutating admission (mutating webhooks)
+3. Mutating admission ([mutating webhooks](mutation_admission_webhook.md))
 4. Schema validation
 5. Validating admission (validating webhooks)
 6. Persisted to etcd
@@ -18,7 +18,7 @@ Admission Controllers могут быть запущены как встроен
 
 Вот некоторые типовые встроенные варианты:
 * **ResourceQuota.** Контролирует количество ресурсов (CPU, память) и объектов (поды, сервисы) в пространствах имён.
-* **SecurityContextDeny.** Запрещает создание объектов без установленных Security Context, что повышает безопасность.
+* **SecurityContextDeny.** Запрещает создание объектов без установленных [Security Context](psa.md), что повышает безопасность.
 
 **Admission Webhook** представляет собой HTTP-сервер, который используется в Admission Controller для выполнения дополнительных проверок и манипуляций с объектами Kubernetes перед их созданием, изменением или удалением.<br>
 Так, если мы задеплоили что-то непозволительное, то Admission webhook дёрнет запрос на HTTP-сервере, после чего произойдёт следующее:<br>

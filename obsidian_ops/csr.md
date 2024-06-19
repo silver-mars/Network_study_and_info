@@ -54,8 +54,22 @@ newkey указывает, что нужно создать новую пару 
 openssl req -key domain.key -new -out domain.csr
 ```
 
-# Инфа о файле конфиг будет здесь
-(coming soon)
+**Конфиг для автоматизации**.<br>
+В вышеприведённом примере - это файл **config.cnf** и выглядеть он может, например, так:
+```
+[ req ]
+default_bits       = 2048
+distinguished_name = req_distinguished_name
+prompt             = no
+
+[ req_distinguished_name ]
+OU                          = 001
+organizationName            = Something_Name
+localityName                = London
+stateOrProvinceName         = London
+commonName                  = test_access_org
+```
+commonName в случае серверного/клиент-серверного сертификата, соответственно, будет заключать в себе DNS/IP-адреса.
 
 # Проверка csr
 

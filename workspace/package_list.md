@@ -4,10 +4,11 @@
 Для ускорения, оптимизации работы и использования в скриптах:<br>
 * **curl**
 * **git**
+* **jq** - a command-line JSON processing tool.
+* **yamllint**
 * **python3.8**
 * **locate** - для быстрого и удобного поиска файлов на локальном АРМ.
 * **openssh-server**
-* **jq** - a command-line JSON processing tool.
 * **zsh** - пока использую в качестве эксперимента на личном АРМ.
 * **tree**
 * **kafkacat** - если используется Apache Kafka

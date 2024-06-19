@@ -3,6 +3,7 @@
 Ниже приведён перечень ПО, не входящего в официальные поддерживаемые репозитории debian/ubuntu.<br>
 
 [python and venv](#virtual-environment-for-python)<br>
+[helm](#helm)<br>
 [markdown reader](#markdown-cli-reader)<br>
 [vim spelling](#downloading-dictionaries-for-vim-spelling)
 
@@ -15,6 +16,15 @@ python3.8 -m venv venv
 source venv/bin/activate
 python -m pip install --upgrade --no-cache-dir pip $PIP_URL
 pip install -r ${WORKSPACE}/requirements.txt --no-cache-dir
+```
+
+## Helm
+```
+curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+sudo apt install apt-transport-https --yes
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+sudo apt update
+sudo apt install helm
 ```
 
 ## Markdown CLI reader

@@ -7,6 +7,8 @@ You can still manually create a Secret to hold a service account token; for exam
 Once you manually create a Secret and link it to a ServiceAccount, the Kubernetes control plane automatically populates the token into that Secret.
 [Source](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/)
 
+# Последовательность действий для настройки автоматизации деплоя
+
 1. Create SA.
 Вначале должен быть создан Service Account, через который мы будем совершать деплой.
 2. Role Binding SA.
@@ -28,7 +30,7 @@ metadata:
     kubernetes.io/service-account.name: "jenkins"
 type: kubernetes.io/service-account-token
 ```
-4/ Чтобы созданный токен заработал его надо также слинковать с SA, дописав в YAML список "secrets" после metadata:
+4. Чтобы созданный токен заработал его надо также слинковать с SA, дописав в YAML список "secrets" после metadata:
 ```
 secrets:
 - name: jenkins-token

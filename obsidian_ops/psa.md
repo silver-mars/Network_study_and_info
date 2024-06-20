@@ -18,7 +18,7 @@ securityContext:
 **Разбор этих параметров.**<br>
 [readOnlyRootFilesystem](#readonlyrootfilesystem)<br>
 [runAsNonRoot](#runasnonroot)<br>
-[runAs](#runas**)<br>
+[runAs](#runas)<br>
 [capabilities](#capabilities)<br>
 [seccompProfile](#seccompprofile)<br>
 
@@ -32,7 +32,7 @@ securityContext:
 **runAsNonRoot: true**<br>
 Всегда ставить в true, чтобы принудительно запускать контейнеры внутри пода в non-root user режиме.
 
-### runAs\*\*
+### runAs
 **runAsUser: xxxx**<br>
 **runAsGroup: xxxx**<br>
 

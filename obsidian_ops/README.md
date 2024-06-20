@@ -2,5 +2,4 @@
 * [openssl](openssl.md)
 * [общей терминологии](unix_term.md), используемой для точного определения различных понятий при обучении
 * [kubernetes](kubernetes.md), центр материалов о kubernetes
-* [admission controller](admission_controller.md) kubernetes
 * [раздел доп. материалов](extra_materials.md), куда я складываю ссылки на разные хорошие статьи.

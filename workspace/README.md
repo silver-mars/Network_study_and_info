@@ -3,6 +3,7 @@
 Ниже приведён перечень ПО, не входящего в официальные поддерживаемые репозитории debian/ubuntu.<br>
 
 [python and venv](#virtual-environment-for-python)<br>
+[visual studio code](#visual-studio)<br>
 [helm](#helm)<br>
 [markdown reader](#markdown-cli-reader)<br>
 [vim spelling](#downloading-dictionaries-for-vim-spelling)
@@ -17,6 +18,23 @@ source venv/bin/activate
 python -m pip install --upgrade --no-cache-dir pip $PIP_URL
 pip install -r ${WORKSPACE}/requirements.txt --no-cache-dir
 ```
+## Visual Studio
+```
+sudo apt install wget gpg
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
+echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" |sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
+rm -f packages.microsoft.gpg
+```
+Then update the package cache and install the package using:
+```
+sudo apt install apt-transport-https
+sudo apt update
+sudo apt install code # or code-insiders
+```
+Плагины:<br>
+**View -> Extensions ->**<vr>
+* Python extension for Visual Studio Code<br>
 
 ## Helm
 ```

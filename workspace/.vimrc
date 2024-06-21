@@ -56,6 +56,8 @@ autocmd BufRead,BufNewFile *.py nmap <F5> <Esc>:w<CR>: !clear; python3 %<CR>
 autocmd BufRead,BufNewFile *.sh nmap <F5> <Esc>:w<CR>: !clear; bash %<CR>
 " Running yaml lint if file is .yaml
 autocmd BufRead,BufNewFile *.yaml,*.yml nmap <F5> <Esc>:w<CR>: !clear; yamllint %<CR>
+" Running preview view if file is .md
+autocmd BufRead,BufNewFile *.md nmap <F5> <Esc>:w<CR>: !clear; glow %<CR>
 
 " New options
 " Включение синтаксиса groovy in Jenkinsfile

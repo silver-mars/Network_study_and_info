@@ -5,6 +5,7 @@
 [python and venv](#virtual-environment-for-python)<br>
 [visual studio code](#visual-studio)<br>
 [helm](#helm)<br>
+[fzf](#fzf)<br>
 [markdown reader](#markdown-cli-reader)<br>
 [vim spelling](#downloading-dictionaries-for-vim-spelling)
 
@@ -43,6 +44,12 @@ sudo apt install apt-transport-https --yes
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
 sudo apt update
 sudo apt install helm
+```
+
+## FZF
+```
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+~/.fzf/install
 ```
 
 ## Markdown CLI reader

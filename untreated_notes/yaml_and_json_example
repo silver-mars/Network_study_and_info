@@ -1,0 +1,22 @@
+yaml and json:
+---
+volumeMounts:
+  - mountPath: /etc/config/ssl
+    name: kafka-jks-vol
+    readOnly: true
+  - mountPath: /tmp
+    name: tmpdir
+---
+{
+  "volumeMounts": [
+    {
+      "mountPath": "/etc/config/ssl",
+      "name": "kafka-jks-vol",
+      "readOnly": true
+    },
+    {
+      "mountPath": "/tmp",
+      "name": "tmpdir"
+    }
+  ]
+}

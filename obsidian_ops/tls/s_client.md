@@ -73,3 +73,8 @@ depth=0 C = RU, O = Something Org, OU = 001, CN = example.ru
 verify return:1
 ---
 ```
+## Extra options
+debug with pkey:
+```
+openssl s_client -connect 10.106.10.122 -port 443 -tlsextdebug -key egress_private_key.pem
+```

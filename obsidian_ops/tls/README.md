@@ -7,4 +7,4 @@
 * [генерация csr](csr.md),
 * [пример интеграции с кафкой](kafka_connect_with_tls.md)
 * [tls-глоссарий](tls_glossary.md)
-
+* [немного практических приёмов с jks](jks.md)

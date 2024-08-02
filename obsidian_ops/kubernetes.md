@@ -2,6 +2,8 @@
 
 [Автоматизация деплоя через токен и SA](token_deploy.md)<br>
 [Addmission controller](admission_controller.md)<br>
-[service mesh в общих чертах)[service_mesh.md)<br>
-[немного о cloud native подходе)[istio_cloud_native.md]
-[немного об istio в целом)[istio.md]
+[service mesh в общих чертах](service_mesh.md)<br>
+[немного о cloud native подходе](istio_cloud_native.md)<br>
+[немного об istio в целом](istio.md)<br>
+[установка istio](istio_install.md)<br>
+[envoy proxy в istio](istio_envoy.md)

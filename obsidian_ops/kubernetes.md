@@ -6,4 +6,5 @@
 [немного о cloud native подходе](istio_cloud_native.md)<br>
 [немного об istio в целом](istio.md)<br>
 [установка istio](istio_install.md)<br>
-[envoy proxy в istio](istio_envoy.md)
+[envoy proxy в istio](istio_envoy.md)<br>
+[istio security: Citadel and SPIFFE](istio_security.md)

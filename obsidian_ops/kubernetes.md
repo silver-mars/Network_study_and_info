@@ -7,4 +7,5 @@
 [немного об istio в целом](istio/istio.md)<br>
 [установка istio](istio/istio_install.md)<br>
 [envoy proxy в istio](istio/istio_envoy.md)<br>
-[istio security: Citadel and SPIFFE](istio/istio_security.md)
+[istio security: Citadel and SPIFFE](istio/istio_security.md)<br>
+[istio pilot](istio_pilot.md)

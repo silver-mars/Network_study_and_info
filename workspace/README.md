@@ -7,7 +7,8 @@
 [helm](#helm)<br>
 [fzf](#fzf)<br>
 [markdown reader](#markdown-cli-reader)<br>
-[vim spelling](#downloading-dictionaries-for-vim-spelling)
+[vim spelling](#downloading-dictionaries-for-vim-spelling)<br>
+[istioctl, если используется istio]
 
 ## Virtual environment for python
 ```
@@ -74,3 +75,11 @@ wget http://ftp.vim.org/vim/runtime/spell/ru.utf-8.sug
 wget http://ftp.vim.org/vim/runtime/spell/ru.utf-8.spl
 ```
 (Сами опции настройки есть в .vimrc).
+
+## Istioctl
+Включает в себя:
+* бинарь istioctl
+* crd и иные примеры для k8s и Helm
+* пример приложения на Istio<br>
+[Загрузка на оф. сайте](https://istio.io/latest/docs/setup/additional-setup/download-istio-release/)<br>
+[Релизы в гитхабе](https://github.com/istio/istio/releases/)<br>

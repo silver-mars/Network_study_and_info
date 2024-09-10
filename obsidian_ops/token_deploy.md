@@ -33,3 +33,7 @@ EOF
 secrets:
 - name: jenkins-token
 ```
+При ручной привязке persistence token'a:
+```
+kubectl patch serviceaccounts jenkins -p '{"secrets": [{"name": "jenkins-token"}]}'
+```

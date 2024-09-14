@@ -1,0 +1,71 @@
+AGENT_LABEL = "Linux_Default"
+pipeline {
+   agent {
+        node {
+            label "${AGENT_LABEL}"
+        }
+    }
+
+// Следующий блок необходим для того, чтобы более точно управлять окружением сборки: для задания конкретной версии требуемой утилиты и обеспечения единообразия окружения сборки на разных агентах
+    environment {
+        PY38 = tool name: 'python3.8', type: 'com.cloudbees.jenkins.plugins.customtools.CustomTool'
+        ANSIBLE_VERSION = '4.10.0'
+    }
+
+    stages {
+        stage('Setting up Python environment') {
+            steps {
+                script {
+                    def urlRepoOsc = 'your_domain.ru'
+                    withCredentials([string(credentialsId: 'your_token', variable: 'SECRET')]) { // set SECRET with the credential content
+                        sh('echo My secret text is ${SECRET}') // This is secure against injection via interpolation
+                        pipConfig = """
+                        [global]
+                        index_url = https://token:${SECRET}@${urlRepoOsc}/repo/pypi/simple
+                        extra-index-url = https://token:${SECRET}@${urlRepoOsc}/repo/nvidia_pypi
+                                          https://token:${SECRET}@${urlRepoOsc}/repo/pypi/Repo-pytorch
+                        trusted_host = ${urlRepoOsc}
+                        default_timeout=90
+                        """
+                        }
+                    }
+                fileOperations([fileCreateOperation(fileContent: pipConfig, fileName: "${WORKSPACE}/pip.conf")]) // Create file pip.conf in workspace
+                // Create virtual environment
+                // Activate virtual environment
+                sh """${PY38}/python3.8 -m venv .venv/${env.BUILD_NUMBER}
+                    source .venv/${env.BUILD_NUMBER}/bin/activate
+                    cp ${WORKSPACE}/pip.conf .venv/${env.BUILD_NUMBER}/
+                    pip3.8 install --upgrade pip
+                    pip3.8 install ansible==${env.ANSIBLE_VERSION}
+                    ansible --version
+                    deactivate
+                    """
+            }
+        }
+        stage('YAML lint') {
+            steps {
+                sh 'yamllint ./*yaml'
+                sh 'ansible --version'
+            }
+        }
+        stage('Ansible lint') {
+            steps {
+                sh 'ansible-lint .'
+            }
+        }
+        stage('Syntax check') {
+            steps {
+                sh """source .venv/${env.BUILD_NUMBER}/bin/activate
+                    ansible-playbook your_playbook.yaml --syntax-check -i inventory.ini
+                    deactivate
+                    """
+            }
+        }
+    }
+    post {
+        // Clean after build
+        always {
+            cleanWs()
+        }
+    }
+}

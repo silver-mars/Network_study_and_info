@@ -2,6 +2,7 @@
 [Проверка доступа в Nexus](#jen_nexusgroovy)<br>
 [Проверка доступа в кластер Openshift](#jen_osegroovy)<br>
 [Проверка доступа в кластер Kubernetes](#jen_kubegroovy)<br>
+[Пример Jenkinsfile](#jenkinsfile)<br>
 
 ## Предварительные требования
 Должен быть установлен плагин **pipeline**, позволяющий конфигурировать конвейер в виде кода на groovy.<br>
@@ -54,3 +55,7 @@ Node label вынесена в global vars.<br>
 
 Это declarative pipeline для проверки возможности Jenkins agent'a коннектиться к нужному api серверу **Kubernetes** и проводить деплой нужных ресурсов.<br>
 Для этой джобы характерны те же пререквизиты и требования проверки доступа Service Account token'a, что и для [проверки доступа в кластер Openshift](#jen_osegroovy)<br>
+
+# jenkinsfile
+
+Пример простого Jenkinsfile'а, проводящего статический анализ кода в ansible-playbook'ах.

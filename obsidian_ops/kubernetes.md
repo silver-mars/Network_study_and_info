@@ -10,4 +10,5 @@
 [istio security: Citadel and SPIFFE](istio/istio_security.md)<br>
 [istio pilot](istio/istio_pilot.md)<br>
 [istio traffic](istio/istio_traffic.md)<br>
-[немного о дебаге istio](istio/istio_debug.md)
+[немного о дебаге istio](istio/istio_debug.md)<br>
+[несколько доп. команд о kubernetes](kub_commands.md)

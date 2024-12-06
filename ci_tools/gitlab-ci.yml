@@ -1,0 +1,31 @@
+stages:
+- vault
+- plan
+- clean_up
+
+cache:
+  paths:
+   - secrets.env
+
+variables:
+  ### Vault vars
+  VAULT_ADDR: https://your_vault_instance.ru
+  VAULT_AUTH_ROLE: 
+  SECRET_STORAGE: # Здесь написать что это
+  SECRET: # Здесь написать что это
+  ### TF backend
+  TF_HTTP_USERNAME:
+  TF_HTTP_PASSWORD:
+
+get-secrets-from-vault:
+  stage: vault
+  image:
+  script:
+    # Проверяем имя ref jobs
+    - echo $CI_COMMIT_REF_NAME
+    # Является ли джоба protected:
+    - echo $CI_COMMIT_REF_PROTECTED
+    - export VAULT_TOKEN=$(vault write -field=token auth/jwt-gitlab/login role=$VAULT_AUTH_ROLE jwt=$CI_JOB_JWT)
+    # for kv 2 version
+    - echo "TF_VAR_USER=$(vault kv get -field=username -mount="$SECRET_STORAGE" "$SECRET")" > secrets.env
+    - echo "TF_VAR_PASS=$(vault kv get -field=password -mount="$SECRET_STORAGE" "$SECRET")" >> secrets.env

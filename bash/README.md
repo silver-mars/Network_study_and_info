@@ -6,13 +6,14 @@
 * подсвечивать важные детали в логах,
 * менять prompt на разных серверах/вм/окружении, чтобы исключить ошибки человеческого фактора, когда есть риск перепутать хосты из-за невнимательности и повредить конф. файлы/совершить иные непоправимые операции.
 
+# Integration vault
 Добавлен блок скриптов REST API взаимодействия с системой управления секретов Hashicorp Vault:<br>
 * [Официальная документация](https://developer.hashicorp.com/vault/docs/what-is-vault)
 * [Простым языком на Хабре](https://habr.com/ru/companies/jetinfosystems/articles/762194/)
 
 Авторизация посредством:
-* [AppRole](approle_login.sh)
-* [Учётной записью пользователя](uz_login.sh)
+* [AppRole](integration_vault/approle_login.sh)
+* [Учётной записью пользователя](integration_vault/uz_login.sh)
 
 Получение списка секретов:
-* [get_secret](get_secret.sh)
+* [get_secret](integration_vault/get_secret.sh)

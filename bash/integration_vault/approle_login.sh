@@ -1,7 +1,7 @@
 #!/bin/bash
 
 vault_url='' # URL до инстанса vault
-namespace='' # tenant Secman
+namespace='' # tenant Vault
 role_id='' # значение поля role id из approle
 secret_id='' # значение поля secret id из approle
  

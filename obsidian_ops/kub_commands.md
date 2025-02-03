@@ -22,3 +22,16 @@ That's exactly what kubectl diff does: It shows that changes that an kubectl app
 ```
 kubectl diff -f my-resource.yaml
 ```
+
+# Create secret
+
+```
+kubectl create secret generic name_secret --from-file=key=path_to_file
+# example:
+kubectl create secret generic tls_secret --from-file=tls.key=tls.key --from-file=tls.crt=tls.crt
+```
+When creating a secret based on a file, the key will default to the basenameof the file, and the value will default to the file content.
+I. e. next example works:
+```
+kubectl create secret generic tls_secret --from-file=tls.key --from-file=tls.crt
+```

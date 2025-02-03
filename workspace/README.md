@@ -4,6 +4,7 @@
 
 [python and venv](#virtual-environment-for-python)<br>
 [visual studio code](#visual-studio)<br>
+[kubectl](#kubectl)<br>
 [helm](#helm)<br>
 [fzf](#fzf)<br>
 [markdown reader](#markdown-cli-reader)<br>
@@ -37,7 +38,31 @@ sudo apt install code # or code-insiders
 Плагины:<br>
 **View -> Extensions ->**<vr>
 * Python extension for Visual Studio Code<br>
-
+## Kubectl
+Documentation is here: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
+```
+# Download latest version
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+```
+Prepare settings:
+```
+kubectl completion bash > ~/.kube/completion.bash_k8s.sh
+printf "
+# kubectl shell completion
+source '$HOME/.kube/completion.bash_k8s.sh'
+" >> $HOME/.bash_aliases
+```
+В последних строчках completion файла добавить k для алиаса:
+```
+alias k=kubectl
+if [[ $(type -t compopt) = "builtin" ]]; then
+    complete -o default -F __start_kubectl kubectl
+    complete -o default -F __start_kubectl k
+else
+    complete -o default -o nospace -F __start_kubectl kubectl
+    complete -o default -o nospace -F __start_kubectl k
+fi
+```
 ## Helm
 ```
 curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
